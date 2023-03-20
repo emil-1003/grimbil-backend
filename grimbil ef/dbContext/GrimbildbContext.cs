@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using grimbil_ef.Models;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace grimbil_ef.dbContext;
 
 public partial class GrimbildbContext : DbContext
@@ -18,6 +17,7 @@ public partial class GrimbildbContext : DbContext
     }
 
     public virtual DbSet<Comment> Comments { get; set; }
+
 
     public virtual DbSet<Picture> Pictures { get; set; }
 
@@ -67,21 +67,21 @@ public partial class GrimbildbContext : DbContext
 
         modelBuilder.Entity<Picture>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("pictures");
+            entity.HasKey(e => e.Pictureid).HasName("PRIMARY");
+
+            entity.ToTable("pictures");
 
             entity.HasIndex(e => e.Postid, "FK_pictures_posts");
 
-            entity.Property(e => e.Picture1).HasColumnName("picture");
             entity.Property(e => e.Pictureid)
                 .HasColumnType("int(11)")
                 .HasColumnName("pictureid");
+            entity.Property(e => e.Picture1).HasColumnName("picture");
             entity.Property(e => e.Postid)
                 .HasColumnType("int(11)")
                 .HasColumnName("postid");
 
-            entity.HasOne(d => d.Post).WithMany()
+            entity.HasOne(d => d.Post).WithMany(p => p.Pictures)
                 .HasForeignKey(d => d.Postid)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_pictures_posts");

@@ -5,7 +5,7 @@ namespace grimbil_ef.Models;
 
 public partial class Picture
 {
-    public int? Pictureid { get; set; }
+    public int Pictureid { get; set; }
 
     public byte[]? Picture1 { get; set; }
 

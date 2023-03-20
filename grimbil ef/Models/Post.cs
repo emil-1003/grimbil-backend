@@ -15,6 +15,8 @@ public partial class Post
 
     public virtual ICollection<Comment> Comments { get; } = new List<Comment>();
 
+    public virtual ICollection<Picture> Pictures { get; } = new List<Picture>();
+
     public virtual ICollection<Rating> Ratings { get; } = new List<Rating>();
 
     public virtual User User { get; set; } = null!;

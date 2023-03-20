@@ -4,6 +4,7 @@ using grimbil_ef.dbContext;
 using System.Diagnostics.Eventing.Reader;
 using grimbil_ef.Models;
 using grimbil_backend.services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace grimbil_backend.Controllers
 {
@@ -16,6 +17,7 @@ namespace grimbil_backend.Controllers
         public UserController(GrimbildbContext context) {
             _context = context;
         }
+        [AllowAnonymous]
         [HttpPost("create")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]

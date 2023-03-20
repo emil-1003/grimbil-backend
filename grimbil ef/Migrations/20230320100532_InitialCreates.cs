@@ -6,14 +6,13 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace grimbil_ef.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialCreates : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
                 .Annotation("MySQL:Charset", "utf8mb4");
-
             migrationBuilder.CreateTable(
                 name: "users",
                 columns: table => new
@@ -84,12 +83,14 @@ namespace grimbil_ef.Migrations
                 name: "pictures",
                 columns: table => new
                 {
-                    pictureid = table.Column<int>(type: "int(11)", nullable: true),
+                    pictureid = table.Column<int>(type: "int(11)", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     picture = table.Column<byte[]>(type: "longblob", nullable: true),
                     postid = table.Column<int>(type: "int(11)", nullable: true)
                 },
                 constraints: table =>
                 {
+                    table.PrimaryKey("PRIMARY", x => x.pictureid);
                     table.ForeignKey(
                         name: "FK_pictures_posts",
                         column: x => x.postid,

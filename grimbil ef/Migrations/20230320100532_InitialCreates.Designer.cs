@@ -11,8 +11,8 @@ using grimbil_ef.dbContext;
 namespace grimbil_ef.Migrations
 {
     [DbContext(typeof(GrimbildbContext))]
-    [Migration("20230316072626_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20230320100532_InitialCreates")]
+    partial class InitialCreates
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,17 +54,21 @@ namespace grimbil_ef.Migrations
 
             modelBuilder.Entity("grimbil_ef.Models.Picture", b =>
                 {
+                    b.Property<int>("Pictureid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int(11)")
+                        .HasColumnName("pictureid");
+
                     b.Property<byte[]>("Picture1")
                         .HasColumnType("longblob")
                         .HasColumnName("picture");
 
-                    b.Property<int?>("Pictureid")
-                        .HasColumnType("int(11)")
-                        .HasColumnName("pictureid");
-
                     b.Property<int?>("Postid")
                         .HasColumnType("int(11)")
                         .HasColumnName("postid");
+
+                    b.HasKey("Pictureid")
+                        .HasName("PRIMARY");
 
                     b.HasIndex(new[] { "Postid" }, "FK_pictures_posts");
 
@@ -185,7 +189,7 @@ namespace grimbil_ef.Migrations
             modelBuilder.Entity("grimbil_ef.Models.Picture", b =>
                 {
                     b.HasOne("grimbil_ef.Models.Post", "Post")
-                        .WithMany()
+                        .WithMany("Pictures")
                         .HasForeignKey("Postid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("FK_pictures_posts");
@@ -229,6 +233,8 @@ namespace grimbil_ef.Migrations
             modelBuilder.Entity("grimbil_ef.Models.Post", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Pictures");
 
                     b.Navigation("Ratings");
                 });
