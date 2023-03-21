@@ -18,7 +18,6 @@ public partial class GrimbildbContext : DbContext
 
     public virtual DbSet<Comment> Comments { get; set; }
 
-
     public virtual DbSet<Picture> Pictures { get; set; }
 
     public virtual DbSet<Post> Posts { get; set; }

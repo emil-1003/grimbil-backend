@@ -56,8 +56,9 @@ namespace grimbil_ef.Migrations
                         .HasColumnType("int(11)")
                         .HasColumnName("pictureid");
 
-                    b.Property<byte[]>("Picture1")
-                        .HasColumnType("longblob")
+                    b.Property<string>("Picture1")
+                        .IsRequired()
+                        .HasColumnType("longtext")
                         .HasColumnName("picture");
 
                     b.Property<int?>("Postid")

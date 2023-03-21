@@ -7,7 +7,7 @@ public partial class Picture
 {
     public int Pictureid { get; set; }
 
-    public byte[]? Picture1 { get; set; }
+    public string Picture1 { get; set; } = null!;
 
     public int? Postid { get; set; }
 

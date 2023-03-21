@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Bcpg;
+using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Reflection.Metadata.Ecma335;
 using System.Xml.Linq;
@@ -18,6 +19,7 @@ namespace grimbil_backend.Controllers
     [Route("[controller]")]
     public class PostsController :ControllerBase
     {
+        private byte[] data; 
         private readonly GrimbildbContext _context;
         private readonly IJwtService _jwtService;
         public PostsController(GrimbildbContext context, IJwtService jwt) {
@@ -40,9 +42,16 @@ namespace grimbil_backend.Controllers
                 BadRequest("Token doesn't exist");
             }
             var user = GetUser(Request.Headers.Authorization);
-            _context.Posts.Add(new Post { Postid =0, Userid = user.Userid,Title =post.title,Description=post.content, User= user});
+            _context.Posts.Add(new Post { Postid =0, Userid = user.Userid,Title =post.Title,Description=post.Content});
+            
             _context.SaveChanges();
-                return Ok(); 
+             var postid = _context.Posts.Where(x=> x.Userid == user.Userid && x.Title == post.Title&& x.Description == post.Content).FirstOrDefault().Postid;
+            foreach (string picture in post.Pictures)
+            {
+                _context.Pictures.Add(new Picture { Postid = postid, Pictureid = 0, Picture1 = picture });
+            }
+            _context.SaveChanges();
+            return Ok(); 
             
           
         }
@@ -56,7 +65,7 @@ namespace grimbil_backend.Controllers
             }
             var user = GetUser(Request.Headers.Authorization);
             Post post = _context.Posts.Where(x => x.Postid == comment.PostId).FirstOrDefault();
-            _context.Comments.Add(new Comment { Post = post,Postid = comment.PostId, Commentid = 0, Userid = user.Userid, Comment1 = comment.Content });
+            _context.Comments.Add(new Comment {Postid = comment.PostId, Commentid = 0, Userid = user.Userid, Comment1 = comment.Content });
             
             _context.SaveChanges();
             return Ok();
@@ -71,29 +80,62 @@ namespace grimbil_backend.Controllers
             }
             var user = GetUser(Request.Headers.Authorization);
             Post post = _context.Posts.Where(x => x.Postid == rating.PostId).FirstOrDefault();
-            _context.Ratings.Add(new Rating { Postid = rating.PostId, Rating1 = rating.Rating, Ratingid = 0, Post = post, User = user });
+            _context.Ratings.Add(new Rating { Postid = rating.PostId, Rating1 = rating.Rating, Ratingid = 0 });
             _context.SaveChanges();
             return Ok();
         }
+        //Remove this
         [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpPost("CreateImages")]
         public IActionResult UploadImages([FromBody]ImageDto images)
         {
             var post = _context.Posts.Where(x => x.Postid == images.PostId).FirstOrDefault();
             foreach (string image in images.Base64Images) {
-                _context.Pictures.Add(new Picture { Picture1 = Convert.FromBase64String(image),Pictureid=0, Postid=images.PostId, Post = post});
+                
+                //Picture test = new Picture { Picture1 = Convert.FromBase64String(image), Pictureid = 0, Postid = images.PostId, Post = post };
+                _context.Pictures.Add(new Picture { Picture1 = image,Pictureid=0, Postid=images.PostId});
+                
+                _context.SaveChanges();
 
             }
             _context.SaveChanges();
             return Ok();
         }
+        [HttpGet("GetPost")]
+        public IActionResult GetPost(int Postid)
+        {
+            
+            var post = _context.Posts.Include(x=> x.Pictures)
+                .Include(z=>z.Comments)
+                .Include(y=> y.Ratings)
+                .Include(u=> u.User)
+                .Where(post=> post.Postid == Postid).Select(p=> new
+                {
+                    p.Postid,
+                    p.Title,
+                    p.Ratings,
+                    p.Comments,
+                    p.Description,
+                    User = new 
+                    {
+                        p.User.Userid,
+                        p.User.Useremail
+                    },
+                    p.Pictures    
+                })
+                .FirstOrDefault();
+            
+            return Ok(post);
+        }
+        //Remove this at some point
         [HttpGet("GetPostImages")]
         public IActionResult GetImages(int postid)
         {
-           Post post =  _context.Posts.Include("Pictures").Where(x=> x.Postid == postid).FirstOrDefault();
             
-            
-            return  Ok(post.Pictures.FirstOrDefault());
+           Post post =  _context.Posts.Include(x=> x.Pictures).Where(x=> x.Postid == postid).FirstOrDefault();
+
+            var test = post.Pictures;
+            return  Ok(post.Pictures.Select(x=> x.Picture1));
         }
         private User GetUser(string Auth)
         {
