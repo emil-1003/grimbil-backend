@@ -16,12 +16,10 @@
 
 
 -- Dumping database structure for grimbildb
-DROP DATABASE IF EXISTS `grimbildb`;
 CREATE DATABASE IF NOT EXISTS `grimbildb` /*!40100 DEFAULT CHARACTER SET latin1 COLLATE latin1_danish_ci */;
 USE `grimbildb`;
 
 -- Dumping structure for table grimbildb.comments
-DROP TABLE IF EXISTS `comments`;
 CREATE TABLE IF NOT EXISTS `comments` (
   `commentid` int(11) NOT NULL AUTO_INCREMENT,
   `comment` text COLLATE latin1_danish_ci NOT NULL,
@@ -30,62 +28,68 @@ CREATE TABLE IF NOT EXISTS `comments` (
   PRIMARY KEY (`commentid`),
   KEY `FK_comments_posts` (`postid`),
   KEY `FK_comments_users` (`userid`),
-  CONSTRAINT `FK_comments_posts` FOREIGN KEY (`postid`) REFERENCES `posts` (`postid`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `FK_comments_users` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `FK_comments_posts` FOREIGN KEY (`postid`) REFERENCES `posts` (`postid`) ON DELETE CASCADE,
+  CONSTRAINT `FK_comments_users` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_danish_ci;
 
 -- Data exporting was unselected.
 
 -- Dumping structure for table grimbildb.pictures
-DROP TABLE IF EXISTS `pictures`;
 CREATE TABLE IF NOT EXISTS `pictures` (
-  `pictureid` int(11) DEFAULT NULL,
-  `picture` longblob,
+  `pictureid` int(11) NOT NULL AUTO_INCREMENT,
+  `picture` longtext COLLATE latin1_danish_ci NOT NULL,
   `postid` int(11) DEFAULT NULL,
+  PRIMARY KEY (`pictureid`),
   KEY `FK_pictures_posts` (`postid`),
-  CONSTRAINT `FK_pictures_posts` FOREIGN KEY (`postid`) REFERENCES `posts` (`postid`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_danish_ci;
+  CONSTRAINT `FK_pictures_posts` FOREIGN KEY (`postid`) REFERENCES `posts` (`postid`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COLLATE=latin1_danish_ci;
 
 -- Data exporting was unselected.
 
 -- Dumping structure for table grimbildb.posts
-DROP TABLE IF EXISTS `posts`;
 CREATE TABLE IF NOT EXISTS `posts` (
   `postid` int(11) NOT NULL AUTO_INCREMENT,
-  `userid` int(11) NOT NULL DEFAULT '0',
+  `userid` int(11) NOT NULL,
   `title` varchar(255) COLLATE latin1_danish_ci DEFAULT NULL,
   `description` text COLLATE latin1_danish_ci,
   PRIMARY KEY (`postid`),
   KEY `userid` (`userid`),
-  CONSTRAINT `FK__users` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_danish_ci;
+  CONSTRAINT `FK__users` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COLLATE=latin1_danish_ci;
 
 -- Data exporting was unselected.
 
 -- Dumping structure for table grimbildb.rating
-DROP TABLE IF EXISTS `rating`;
 CREATE TABLE IF NOT EXISTS `rating` (
-  `ratingid` int(11) NOT NULL,
+  `ratingid` int(11) NOT NULL AUTO_INCREMENT,
   `rating` int(11) NOT NULL,
   `userid` int(11) NOT NULL,
   `postid` int(11) NOT NULL,
   PRIMARY KEY (`ratingid`),
   KEY `FK_rating_posts` (`postid`),
   KEY `FK_rating_users` (`userid`),
-  CONSTRAINT `FK_rating_posts` FOREIGN KEY (`postid`) REFERENCES `posts` (`postid`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  CONSTRAINT `FK_rating_users` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE ON UPDATE NO ACTION
+  CONSTRAINT `FK_rating_posts` FOREIGN KEY (`postid`) REFERENCES `posts` (`postid`) ON DELETE CASCADE,
+  CONSTRAINT `FK_rating_users` FOREIGN KEY (`userid`) REFERENCES `users` (`userid`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_danish_ci;
 
 -- Data exporting was unselected.
 
 -- Dumping structure for table grimbildb.users
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `userid` int(11) NOT NULL AUTO_INCREMENT,
   `useremail` varchar(50) COLLATE latin1_danish_ci NOT NULL DEFAULT '',
   `userpassword` varchar(255) COLLATE latin1_danish_ci NOT NULL DEFAULT '0',
-  `usertype` int(11) NOT NULL DEFAULT '0',
+  `usertype` int(11) NOT NULL,
   PRIMARY KEY (`userid`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_danish_ci;
+
+-- Data exporting was unselected.
+
+-- Dumping structure for table grimbildb.__efmigrationshistory
+CREATE TABLE IF NOT EXISTS `__efmigrationshistory` (
+  `MigrationId` varchar(150) COLLATE latin1_danish_ci NOT NULL,
+  `ProductVersion` varchar(32) COLLATE latin1_danish_ci NOT NULL,
+  PRIMARY KEY (`MigrationId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_danish_ci;
 
 -- Data exporting was unselected.
