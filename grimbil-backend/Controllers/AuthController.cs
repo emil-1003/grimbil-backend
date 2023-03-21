@@ -1,11 +1,8 @@
 ﻿using grimbil_backend.Models;
 using grimbil_backend.services;
 using grimbil_ef.dbContext;
-using grimbil_ef.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.JsonWebTokens;
-using System.Reflection.Metadata.Ecma335;
 
 namespace grimbil_backend.Controllers
 {
@@ -38,12 +35,11 @@ namespace grimbil_backend.Controllers
                 return BadRequest("Incorrect password");
             }
             var token = _jwtService.CreateToken(user);
-            //token = _jwtservice.GenerateJwtToken(user.Useremail);
             Response.Headers.Authorization = token;
 
             Response.Cookies.Append("token",user.Useremail);
             Response.Cookies.Append("jwt", token);
-            return Ok("User logged in successfully"+ Response.Headers.Authorization);
+            return Ok(Response.Headers.Authorization);
         }
         [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("RefreshToken")]
@@ -53,26 +49,14 @@ namespace grimbil_backend.Controllers
         
         public IActionResult RefreshToken()
         {
-            string token="";
-            if (!string.IsNullOrEmpty(Request.Headers.Authorization))
-            {
-                token = Request.Headers.Authorization;
-            }
-            else if (!string.IsNullOrEmpty(Request.Cookies["jwt"]))
-            {
-                token = Request.Cookies["jwt"];
-            }
-            else { BadRequest("token doesn't exist"); }
-            var jwt =_jwtService.DecodeToken(token);
+            var jwt =_jwtService.DecodeToken(Request.Headers.Authorization);
             var useremail = jwt.Claims.Where(x => x.Type == "userEmail").FirstOrDefault().Value;
             var user = _context.Users.Where(x => x.Useremail == useremail).FirstOrDefault();
             var userpassword = jwt.Claims.Where(x => x.Type == "password").FirstOrDefault().Value;
             if (user.Userpassword == userpassword)
             {
                 var jwttoken = _jwtService.CreateToken(user);
-                Response.Headers.Authorization = token;
-                Response.Cookies.Append("jwt", token);
-
+                Response.Headers.Authorization = jwttoken;
                 return Ok("user token refreshed");
             }
             return BadRequest("json web token credentials are not users credentials");

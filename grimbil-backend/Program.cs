@@ -13,7 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<GrimbildbContext>();
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options=> { 
+});
 builder.Services.AddSingleton<IJwtService, Jwtservice>();
 builder.Services.AddAuthentication(options => {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
