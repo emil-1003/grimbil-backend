@@ -36,9 +36,6 @@ namespace grimbil_backend.Controllers
             }
             var token = _jwtService.CreateToken(user);
             Response.Headers.Authorization = token;
-
-            Response.Cookies.Append("token",user.Useremail);
-            Response.Cookies.Append("jwt", token);
             return Ok(Response.Headers.Authorization);
         }
         [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]

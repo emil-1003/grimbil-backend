@@ -7,6 +7,7 @@ using grimbil_backend.services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Reflection.Metadata.Ecma335;
+using grimbil_backend.Models;
 
 namespace grimbil_backend.Controllers
 {
@@ -25,21 +26,24 @@ namespace grimbil_backend.Controllers
         [HttpPost("Create")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public IActionResult Create([FromBody] User user)
+        public IActionResult Create([FromBody] LoginDto user)
         {
-            if (user == null || user.Useremail == null || user.Userpassword == null)
+            if (user == null || user.UserEmail == null || user.Password == null)
             {
                 return BadRequest("user cannot be null");
             }
-            if (_context.Users.Select(x => x.Useremail).Contains(user.Useremail))
+            if (_context.Users.Select(x => x.Useremail).Contains(user.UserEmail))
             {
                 return BadRequest("user already exists");
             }
-            user.Userpassword = Hashingservice.GetHashString(user.Userpassword);
-            _context.Users.Add(user);
+            user.Password = Hashingservice.GetHashString(user.Password);
+            User newUser = new User { Userid = 0, Useremail = user.UserEmail, Usertype = 0, Userpassword = user.Password };
+            _context.Users.Add(newUser);
             _context.SaveChanges();
+            var token = _jwtService.CreateToken(newUser);
+            Response.Headers.Authorization = token;
 
-            return Ok(string.Format("user {0} is created", user.Useremail));
+            return Ok(string.Format("user {0} is created \n {1}", user.UserEmail, Response.Headers.Authorization));
         }
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("GetAllUsers")]
