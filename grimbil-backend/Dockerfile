@@ -10,8 +10,8 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["grimbil-backend.csproj", "grimbil-backend/"]
-#COPY ["../grimbil ef/grimbil ef.csproj", "grimbil ef/"]
+COPY ["grimbil-backend/grimbil-backend.csproj", "grimbil-backend/"]
+COPY ["grimbil ef/grimbil ef.csproj", "grimbil ef/"]
 RUN dotnet restore "grimbil-backend/grimbil-backend.csproj"
 COPY . .
 WORKDIR "/src/grimbil-backend"
