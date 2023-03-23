@@ -27,7 +27,7 @@ namespace grimbil_backend.Controllers
             return Ok(JsonConvert.SerializeObject(_context.Posts));
         }
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        [HttpGet("AllUserposts")]
+        [HttpGet("AllUsersposts")]
         public IActionResult GetAlluserpostsPosts()
         {
             User user = GetUser(Request.Headers.Authorization);
