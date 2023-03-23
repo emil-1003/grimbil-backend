@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Reflection.Metadata.Ecma335;
 using grimbil_backend.Models;
+using BCrypt;
 
 namespace grimbil_backend.Controllers
 {
@@ -36,7 +37,9 @@ namespace grimbil_backend.Controllers
             {
                 return BadRequest("user already exists");
             }
-            user.Password = Hashingservice.GetHashString(user.Password);
+            //user.Password = Hashingservice.GetHashString(user.Password);
+            string salt = BCrypt.Net.BCrypt.GenerateSalt();
+            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password, salt);
             User newUser = new User { Userid = 0, Useremail = user.UserEmail, Usertype = 0, Userpassword = user.Password };
             _context.Users.Add(newUser);
             _context.SaveChanges();

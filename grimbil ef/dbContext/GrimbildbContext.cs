@@ -34,7 +34,7 @@ public partial class GrimbildbContext : DbContext
         .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
         .AddJsonFile("appsettings.json")
         .Build();
-        optionsBuilder.UseMySQL(configuration["ConnectionStrings:GrimbilLocaldatabase"]); 
+        optionsBuilder.UseMySQL(configuration["ConnectionStrings:GrimbilDatabase"]); 
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

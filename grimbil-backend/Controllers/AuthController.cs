@@ -1,4 +1,5 @@
-﻿using grimbil_backend.Models;
+﻿using BCrypt.Net;
+using grimbil_backend.Models;
 using grimbil_backend.services;
 using grimbil_ef.dbContext;
 using Microsoft.AspNetCore.Authorization;
@@ -30,7 +31,7 @@ namespace grimbil_backend.Controllers
             {
                 return BadRequest("User has been blocked by moderator");
             }
-            if (user.Userpassword!= Hashingservice.GetHashString( login.Password))
+            if ( !BCrypt.Net.BCrypt.Verify(login.Password, user.Userpassword))
             {
                 return BadRequest("Incorrect password");
             }
