@@ -26,6 +26,13 @@ namespace grimbil_backend.Controllers
         {           
             return Ok(JsonConvert.SerializeObject(_context.Posts));
         }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("AllUsersposts")]
+        public IActionResult GetAlluserpostsPosts()
+        {
+            User user = GetUser(Request.Headers.Authorization);
+            return Ok(JsonConvert.SerializeObject(_context.Posts.Where(x=> x.Userid == user.Userid)));
+        }
         [AllowAnonymous]
         [HttpGet("GetPost")]
         public IActionResult GetPost(int postid)
