@@ -44,7 +44,6 @@ namespace grimbil_backend.Controllers
                 p.Title,
                 rating = ratings[p.Postid],
                 p.Description,
-                p.Ratings,
                 User = new
                 {
                     p.User.Userid,
@@ -81,7 +80,6 @@ namespace grimbil_backend.Controllers
                     p.Title,
                     rating = ratings[p.Postid],
                     p.Description,
-                    p.Ratings,
                     User = new
                     {
                         p.User.Userid,
