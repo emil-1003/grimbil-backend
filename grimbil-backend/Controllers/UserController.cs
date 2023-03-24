@@ -43,7 +43,7 @@ namespace grimbil_backend.Controllers
             User newUser = new User { Userid = 0, Useremail = user.UserEmail, Usertype = 0, Userpassword = user.Password };
             _context.Users.Add(newUser);
             _context.SaveChanges();
-            var token = _jwtService.CreateToken(newUser);
+            var token = _jwtService.CreateToken(_context.Users.Single(x=> x.Useremail == newUser.Useremail));
             Response.Headers.Authorization = token;
 
             return Ok(string.Format("user {0} is created \n {1}", user.UserEmail, Response.Headers.Authorization));
