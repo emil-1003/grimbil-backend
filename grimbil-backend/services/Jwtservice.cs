@@ -32,6 +32,7 @@ namespace grimbil_backend.services
             {
                 new Claim("userEmail", user.Useremail),
                 new Claim("userType", Convert.ToString(user.Usertype)),
+                new Claim("userId",Convert.ToString(user.Userid)),
                 new Claim("password", user.Userpassword)
             };
 
