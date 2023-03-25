@@ -99,6 +99,11 @@ namespace grimbil_backend.Controllers
                 amRatings++;
                 averageRating += rating.Rating1;
             }
+            foreach(var comment in _context.Comments.Where(x => x.Postid == postid).ToList())
+            {
+                comment.User = _context.Users.Single(x => x.Userid == comment.Userid);
+            }
+            _context.SaveChanges();
             averageRating /= amRatings;
             var post = _context.Posts.Include(x => x.Pictures)
                 .Include(z => z.Comments)
@@ -109,7 +114,8 @@ namespace grimbil_backend.Controllers
                     p.Postid,
                     p.Title,
                     rating = averageRating,
-                    p.Comments,
+                    comments = p.Comments.Select(x => new { x.Commentid, x.Comment1, x.User.Useremail, x.Userid }),
+                   
                     p.Description,
                     p.Ratings,
                     User = new
